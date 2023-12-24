@@ -27,7 +27,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity
-@SequenceGenerator(name = "token_seq_generator", allocationSize = 1, sequenceName = "token_seq_seq")
+@SequenceGenerator(name = "token_seq_generator", allocationSize = 1, sequenceName = "token_seq")
 public class Token {
 
   @Id

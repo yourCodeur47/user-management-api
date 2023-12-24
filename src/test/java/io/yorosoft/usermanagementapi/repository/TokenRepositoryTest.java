@@ -2,6 +2,7 @@ package io.yorosoft.usermanagementapi.repository;
 
 import io.yorosoft.usermanagementapi.configuration.TestcontainersConfiguration;
 import io.yorosoft.usermanagementapi.enums.Role;
+import io.yorosoft.usermanagementapi.model.Token;
 import io.yorosoft.usermanagementapi.model.User;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,12 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class UserRepositoryTest extends TestcontainersConfiguration {
+public class TokenRepositoryTest extends TestcontainersConfiguration {
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,21 +35,34 @@ public class UserRepositoryTest extends TestcontainersConfiguration {
     }
 
     @Test
-    void when_findByEmail_width_correct_email_should_return_correct_user() {
-        String email = "theo@gmail.com";
-        User user = getUser("Theo", "Hernandez", email, Role.USER);
-        userRepository.save(user);
-        Optional<User> savedUser = userRepository.findByEmail(email);
-        assertThat(savedUser.isPresent()).isTrue();
-        assertThat(savedUser.get().getEmail()).isEqualTo(email);
+    void when_findAllValidTokenByUser_width_correct_user_id_should_return_token_list() {
+        User user = getUser("Theo", "Hernandez", "theo@gmail.com", Role.USER);
+        Token token = getToken(false, false, user);
+
+        User savedUser = userRepository.save(user);
+        tokenRepository.save(token);
+
+        List<Token> tokens = tokenRepository.findAllValidTokenByUser(savedUser.getId());
+
+        assertThat(tokens)
+                .isNotEmpty()
+                .hasSize(1);
+
     }
 
     @Test
-    void when_findByEmail_width_wrong_email_should_return_empty() {
-        String email = "toto@gmail.com";
+    void when_findAllValidTokenByUser_width_wrong_user_id_should_return_empty_list() {
         User user = getUser("Theo", "Hernandez", "theo@gmail.com", Role.USER);
-        userRepository.save(user);
-        Optional<User> savedUser = userRepository.findByEmail(email);
-        assertThat(savedUser.isPresent()).isFalse();
+        Token token = getToken(false, false, user);
+
+        User savedUser = userRepository.save(user);
+        tokenRepository.save(token);
+
+        List<Token> tokens = tokenRepository.findAllValidTokenByUser(15);
+
+        assertThat(tokens)
+                .isEmpty();
+
     }
+
 }
