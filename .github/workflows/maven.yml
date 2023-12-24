@@ -63,4 +63,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: package user-management-api
-        run: mvn -B package -DskipTests --f˚ile pom.xml
+        run: mvn -B package -DskipTests --file pom.xml
