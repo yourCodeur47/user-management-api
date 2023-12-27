@@ -20,6 +20,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @Builder
@@ -35,13 +38,17 @@ public class Token {
   public Integer id;
 
   @Column(unique = true)
+  @NotBlank
   public String token;
 
   @Enumerated(EnumType.STRING)
+  @NotBlank
   public TokenType tokenType = TokenType.BEARER;
 
+  @NotNull
   public boolean revoked;
 
+  @NotNull
   public boolean expired;
 
   @ManyToOne(fetch = FetchType.LAZY)
