@@ -47,9 +47,11 @@ jobs:
           cache: maven
       - name: compile user-management-api
         run: mvn -B test --file pom.xml
+      - name: Generate Jacoco report
+        run: mvn org.jacoco:jacoco-maven-plugin:report
       - name: Check code coverage
         run: |
-          if [ $(mvn org.jacoco:jacoco-maven-plugin:report | grep -oP 'Total.*?(\d+)%' | grep -oP '\d+') -lt 75 ]; then
+          if [ $(grep -oP 'Total.*?(\d+)%' target/site/jacoco/index.html | grep -oP '\d+' | head -1) -lt 75 ]; then
             echo "Code coverage is less than 75%"
             exit 1
           fi
