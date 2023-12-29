@@ -37,7 +37,9 @@ import java.util.Objects;
 @ToString
 @Entity
 @Table(name = "app_user")
-@SequenceGenerator(name = "app_user_seq_generator", allocationSize = 1, sequenceName = "app_user_seq")
+@SequenceGenerator(name = "app_user_seq_generator",
+        allocationSize = 1,
+        sequenceName = "app_user_seq")
 public class User implements UserDetails {
 
   @Id
