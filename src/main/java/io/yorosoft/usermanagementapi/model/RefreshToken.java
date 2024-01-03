@@ -22,7 +22,7 @@ public class RefreshToken {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE,
           generator = "refresh_token_seq_generator")
-  public Integer id;
+  public Long id;
 
   @NotBlank
   public String token;

@@ -7,12 +7,12 @@ import io.yorosoft.usermanagementapi.model.User;
 import java.util.List;
 
 public record UserInfoDTO(
-    Integer id,
+    Long id,
     String firstname,
     String lastname,
     String email,
     Role role,
-    List<TokenDTO> tokens
+    boolean enabled
 ) {
 
     public UserInfoDTO(User user) {
@@ -22,18 +22,7 @@ public record UserInfoDTO(
                 user.getLastname(),
                 user.getEmail(),
                 user.getRole(),
-                null
-        );
-    }
-
-    public UserInfoDTO(User user, List<TokenDTO> tokens) {
-        this(
-                user.getId(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getEmail(),
-                user.getRole(),
-                tokens
+                user.isEnabled()
         );
     }
 

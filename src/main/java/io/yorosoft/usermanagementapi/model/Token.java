@@ -21,7 +21,7 @@ public class Token {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE,
           generator = "token_seq_generator")
-  public Integer id;
+  public Long id;
 
   @NotBlank
   public String token;
