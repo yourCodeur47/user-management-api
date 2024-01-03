@@ -1,29 +1,57 @@
 package io.yorosoft.usermanagementapi.configuration;
 
-import lombok.RequiredArgsConstructor;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.NoSuchAlgorithmException;
+
 @Configuration
-@EnableWebSecurity
-@RequiredArgsConstructor
-@EnableMethodSecurity
 public class SecurityConfiguration {
 
-  private final JwtAuthenticationFilter jwtAuthFilter;
-  private final AuthenticationProvider authenticationProvider;
   private final LogoutHandler logoutHandler;
+
+    private final RSAPublicKey publicKey;
+    private final RSAPrivateKey privateKey;
+
+    public SecurityConfiguration(LogoutHandler logoutHandler) throws NoSuchAlgorithmException {
+        this.logoutHandler = logoutHandler;
+
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        this.publicKey = (RSAPublicKey) keyPair.getPublic();
+        this.privateKey = (RSAPrivateKey) keyPair.getPrivate();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,8 +73,6 @@ public class SecurityConfiguration {
                 .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .cors(Customizer.withDefaults())
         .logout(logout -> logout
                 .logoutUrl("/api/v1/auth/logout")
@@ -55,4 +81,21 @@ public class SecurityConfiguration {
         );
     return http.build();
   }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 }

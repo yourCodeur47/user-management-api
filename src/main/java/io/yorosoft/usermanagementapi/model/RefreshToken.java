@@ -1,10 +1,10 @@
 package io.yorosoft.usermanagementapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Getter
@@ -14,24 +14,20 @@ import java.time.Instant;
 @AllArgsConstructor
 @ToString
 @Entity
-@SequenceGenerator(name = "token_seq_generator",
+@SequenceGenerator(name = "refresh_token_seq_generator",
         allocationSize = 1,
-        sequenceName = "token_seq")
-public class Token {
+        sequenceName = "refresh_token_seq")
+public class RefreshToken {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE,
-          generator = "token_seq_generator")
+          generator = "refresh_token_seq_generator")
   public Integer id;
 
   @NotBlank
   public String token;
 
   @NotNull
-  @Column(name = "expiration_date")
-  private Instant expirationDate;
-
-  @OneToOne(fetch = FetchType.LAZY)
-  @ToString.Exclude
-  public User user;
-
+  @Column(name = "creation_date")
+  private Instant creationDate;
 }
