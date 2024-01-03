@@ -33,14 +33,11 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 public class SecurityConfiguration {
 
-  private final LogoutHandler logoutHandler;
 
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
 
-    public SecurityConfiguration(LogoutHandler logoutHandler) throws NoSuchAlgorithmException {
-        this.logoutHandler = logoutHandler;
-
+    public SecurityConfiguration() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
