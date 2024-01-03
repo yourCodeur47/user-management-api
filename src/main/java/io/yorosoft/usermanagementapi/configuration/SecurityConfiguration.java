@@ -73,12 +73,7 @@ public class SecurityConfiguration {
                 .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .cors(Customizer.withDefaults())
-        .logout(logout -> logout
-                .logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-        );
+        .cors(Customizer.withDefaults());
     return http.build();
   }
 
