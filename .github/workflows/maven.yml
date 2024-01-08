@@ -52,9 +52,7 @@ jobs:
       - name: Check code coverage
         run: |
           COVERAGE=$(grep -oP 'Total.*?(\d+)%' target/site/jacoco/index.html | grep -oP '\d+' | head -1);
-          COVERAGEE=$(awk '/<td>Total<\/td>/{getline; getline; gsub(/[%<>/td ]/, ""); print}' target/site/jacoco/index.html | head -1);
           echo "Code coverage: $COVERAGE%";
-          echo "Code coverage: $COVERAGEE%";
           if [ $COVERAGE -lt 75 ]; then
             echo "Code coverage is less than 75%, build failed."
             exit 1
