@@ -1,10 +1,8 @@
 package io.yorosoft.usermanagementapi.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.yorosoft.usermanagementapi.config.TestConfigurer;
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
-import io.yorosoft.usermanagementapi.dto.UserInfoDTO;
 import io.yorosoft.usermanagementapi.enums.Role;
 import io.yorosoft.usermanagementapi.model.User;
 import io.yorosoft.usermanagementapi.service.AuthService;
@@ -17,15 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class AuthControllerTest extends TestConfigurer {
+class AuthControllerTest extends TestConfigurer {
 
     @Autowired
     MockMvc mockMvc;
