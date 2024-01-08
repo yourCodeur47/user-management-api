@@ -178,6 +178,7 @@
 				<configuration>
 					<excludes>
 						<exclude>**/io/yorosoft/usermanagementapi/dto/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/service/UserDetailsServiceImpl.*</exclude>
 						<exclude>**/io/yorosoft/usermanagementapi/model/**</exclude>
 						<exclude>**/io/yorosoft/usermanagementapi/exception/**</exclude>
 						<exclude>**/io/yorosoft/usermanagementapi/utils/**</exclude>

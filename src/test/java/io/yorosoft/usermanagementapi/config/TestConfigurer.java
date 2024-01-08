@@ -2,9 +2,11 @@ package io.yorosoft.usermanagementapi.config;
 
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
 import io.yorosoft.usermanagementapi.enums.Role;
+import io.yorosoft.usermanagementapi.model.RefreshToken;
 import io.yorosoft.usermanagementapi.model.Token;
 import io.yorosoft.usermanagementapi.model.User;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class TestConfigurer {
@@ -28,6 +30,10 @@ public class TestConfigurer {
         return Token.builder()
                 .token(token)
                 .user(user).build();
+    }
+
+    protected RefreshToken getRefreshToken(String token, Instant creationDate) {
+        return RefreshToken.builder().token(token).creationDate(creationDate).build();
     }
 
 
