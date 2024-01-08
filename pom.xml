@@ -175,6 +175,18 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.11</version>
+				<configuration>
+					<excludes>
+						<exclude>**/io/yorosoft/usermanagementapi/dto/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/model/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/exception/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/utils/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/enums/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/security/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/configuration/**</exclude>
+						<exclude>**/io/yorosoft/usermanagementapi/UserManagementApiApplication.*</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
