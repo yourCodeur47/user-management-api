@@ -56,7 +56,7 @@ jobs:
           COVERAGEEE=$(awk -F '[<>]' '/<td>Total<\/td>/{getline; getline; print $3}' target/site/jacoco/index.html | grep -oP '\d+%');
           echo "Code coverage: $COVERAGE%";
           echo "Code coverage: $COVERAGEE%";
-          echo "Code coverage: COVERAGEEE%";
+          echo "Code coverage: $COVERAGEEE%";
           if [ $COVERAGE -lt 75 ]; then
             echo "Code coverage is less than 75%, build failed."
             exit 1
