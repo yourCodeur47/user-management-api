@@ -32,8 +32,6 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 public class SecurityConfiguration {
-
-
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
 
@@ -55,15 +53,15 @@ public class SecurityConfiguration {
         return http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/api/auth/**")
-                    .permitAll()
-                    .requestMatchers("/v2/api-docs",
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(
+                            "/v2/api-docs",
                             "/configuration/ui",
                             "/swagger-resources/**",
                             "/configuration/security",
                             "/swagger-ui.html",
-                            "/webjars/**")
-                    .permitAll()
+                            "/webjars/**"
+                    ).permitAll()
                     .anyRequest()
                     .authenticated()
             )

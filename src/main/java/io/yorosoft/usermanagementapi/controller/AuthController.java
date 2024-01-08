@@ -3,7 +3,7 @@ package io.yorosoft.usermanagementapi.controller;
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
 import io.yorosoft.usermanagementapi.dto.UserInfoDTO;
 import io.yorosoft.usermanagementapi.service.AuthService;
-import io.yorosoft.usermanagementapi.utils.Result;
+import io.yorosoft.usermanagementapi.utils.ResultDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/signup")
-    public Result signup(@RequestBody @Valid RegisterDTO registerDTO) {
+    @PostMapping()
+    public ResultDTO signup(@RequestBody @Valid RegisterDTO registerDTO) {
         var user =  authService.signup(registerDTO);
-        return new Result(true, HttpStatus.CREATED, "User created width succes", new UserInfoDTO(user));
+        return new ResultDTO(true, HttpStatus.OK.value(), "User created width success", new UserInfoDTO(user));
     }
 }

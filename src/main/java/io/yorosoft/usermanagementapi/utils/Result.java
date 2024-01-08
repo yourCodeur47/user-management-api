@@ -1,5 +1,7 @@
 package io.yorosoft.usermanagementapi.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -8,17 +10,16 @@ import org.springframework.http.HttpStatus;
  */
 public class Result {
 
-    private boolean flag; // Two values: true means success, false means not success
+    private final boolean flag; // Two values: true means success, false means not success
 
     HttpStatus code;
 
-    private String message; // Response message
+    private final String message; // Response message
 
+    @Setter
+    @Getter
     private Object data; // The response payload
 
-
-    public Result() {
-    }
 
     public Result(boolean flag, HttpStatus code, String message) {
         this.flag = flag;
@@ -30,14 +31,6 @@ public class Result {
         this.flag = flag;
         this.code = code;
         this.message = message;
-        this.data = data;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
         this.data = data;
     }
 

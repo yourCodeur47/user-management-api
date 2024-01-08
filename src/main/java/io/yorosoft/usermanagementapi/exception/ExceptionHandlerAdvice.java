@@ -1,12 +1,7 @@
 package io.yorosoft.usermanagementapi.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.yorosoft.usermanagementapi.utils.Result;
-import io.yorosoft.usermanagementapi.utils.StatusCode;
+import io.yorosoft.usermanagementapi.utils.ResultDTO;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,10 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
@@ -33,8 +24,8 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleObjectNotFoundException(ObjectNotFoundException ex) {
-        return new Result(false, HttpStatus.NOT_FOUND, ex.getMessage());
+    ResultDTO handleObjectNotFoundException(ObjectNotFoundException ex) {
+        return new ResultDTO(false, HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex);
     }
 
     /**
@@ -45,7 +36,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Result handleValidationException(MethodArgumentNotValidException ex) {
+    ResultDTO handleValidationException(MethodArgumentNotValidException ex) {
         List<ObjectError> errors = ex.getBindingResult().getAllErrors();
         Map<String, String> map = new HashMap<>(errors.size());
         errors.forEach((error) -> {
@@ -53,42 +44,42 @@ public class ExceptionHandlerAdvice {
             String val = error.getDefaultMessage();
             map.put(key, val);
         });
-        return new Result(false, HttpStatus.BAD_REQUEST, "Provided arguments are invalid, see data for details.", map);
+        return new ResultDTO(false, HttpStatus.BAD_REQUEST.value(), "Provided arguments are invalid, see data for details.", map);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public Result handleIllegalArgumentException(IllegalArgumentException ex) {
-        return new Result(false, HttpStatus.BAD_REQUEST, ex.getMessage());
+    public ResultDTO handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResultDTO(false, HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex);
     }
 
     @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    Result handleAuthenticationException(Exception ex) {
-        return new Result(false, HttpStatus.UNAUTHORIZED, "username or password is incorrect.", ex.getMessage());
+    ResultDTO handleAuthenticationException(Exception ex) {
+        return new ResultDTO(false, HttpStatus.UNAUTHORIZED.value(), "username or password is incorrect.", ex);
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    Result handleInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
-        return new Result(false, HttpStatus.UNAUTHORIZED, "Login credentials are missing.", ex.getMessage());
+    ResultDTO handleInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
+        return new ResultDTO(false, HttpStatus.UNAUTHORIZED.value(), "Login credentials are missing.", ex);
     }
 
     @ExceptionHandler(AccountStatusException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    Result handleAccountStatusException(AccountStatusException ex) {
-        return new Result(false, HttpStatus.UNAUTHORIZED, "User account is abnormal.", ex.getMessage());
+    ResultDTO handleAccountStatusException(AccountStatusException ex) {
+        return new ResultDTO(false, HttpStatus.UNAUTHORIZED.value(), "User account is abnormal.", ex);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    Result handleAccessDeniedException(AccessDeniedException ex) {
-        return new Result(false, HttpStatus.FORBIDDEN, "No permission.", ex.getMessage());
+    ResultDTO handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResultDTO(false, HttpStatus.FORBIDDEN.value(), "No permission.", ex);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleNoHandlerFoundException(NoHandlerFoundException ex) {
-        return new Result(false, HttpStatus.NOT_FOUND, "This API endpoint is not found.", ex.getMessage());
+    ResultDTO handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        return new ResultDTO(false, HttpStatus.NOT_FOUND.value(), "This API endpoint is not found.", ex);
     }
 
     /**
@@ -99,8 +90,8 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    Result handleOtherException(Exception ex) {
-        return new Result(false, HttpStatus.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
+    ResultDTO handleOtherException(Exception ex) {
+        return new ResultDTO(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "A server internal error occurs.", ex);
     }
 
 }
