@@ -1,10 +1,10 @@
 package io.yorosoft.usermanagementapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Getter
@@ -14,7 +14,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @ToString
 @Entity
-public class Token {
+public class RefreshToken {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
@@ -23,11 +24,6 @@ public class Token {
   public String token;
 
   @NotNull
-  @Column(name = "expiration_date")
-  private Instant expirationDate;
-
-  @OneToOne(fetch = FetchType.LAZY)
-  @ToString.Exclude
-  public User user;
-
+  @Column(name = "creation_date")
+  private Instant creationDate;
 }

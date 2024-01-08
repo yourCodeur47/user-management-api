@@ -1,60 +1,39 @@
 package io.yorosoft.usermanagementapi.model;
 
 import io.yorosoft.usermanagementapi.enums.Role;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.GenerationType;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.ToString;
-
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "app_user")
-@SequenceGenerator(name = "app_user_seq_generator", allocationSize = 1, sequenceName = "app_user_seq")
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_seq_generator")
-  private Integer id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   @NotBlank
-  @Size(min = 1, max = 50)
   private String firstname;
 
   @NotBlank
-  @Size(min = 1, max = 50)
   private String lastname;
 
   @NotBlank
   @Email
-  @Size(min = 4, max = 50)
   private String email;
 
   @NotBlank
@@ -63,9 +42,8 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  @OneToMany(mappedBy = "user")
-  @ToString.Exclude
-  private List<Token> tokens;
+  @NotNull
+  private boolean enable;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -99,7 +77,7 @@ public class User implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return isEnable();
   }
 
   @Override
