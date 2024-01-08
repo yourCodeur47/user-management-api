@@ -14,14 +14,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @ToString
 @Entity
-@SequenceGenerator(name = "refresh_token_seq_generator",
-        allocationSize = 1,
-        sequenceName = "refresh_token_seq")
 public class RefreshToken {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE,
-          generator = "refresh_token_seq_generator")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
   @NotBlank

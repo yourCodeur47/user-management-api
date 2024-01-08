@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     Result handleObjectNotFoundException(ObjectNotFoundException ex) {
-        return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
+        return new Result(false, HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     /**
@@ -52,65 +53,42 @@ public class ExceptionHandlerAdvice {
             String val = error.getDefaultMessage();
             map.put(key, val);
         });
-        return new Result(false, StatusCode.INVALID_ARGUMENT, "Provided arguments are invalid, see data for details.", map);
+        return new Result(false, HttpStatus.BAD_REQUEST, "Provided arguments are invalid, see data for details.", map);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Result handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new Result(false, HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     Result handleAuthenticationException(Exception ex) {
-        return new Result(false, StatusCode.UNAUTHORIZED, "username or password is incorrect.", ex.getMessage());
+        return new Result(false, HttpStatus.UNAUTHORIZED, "username or password is incorrect.", ex.getMessage());
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     Result handleInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
-        return new Result(false, StatusCode.UNAUTHORIZED, "Login credentials are missing.", ex.getMessage());
+        return new Result(false, HttpStatus.UNAUTHORIZED, "Login credentials are missing.", ex.getMessage());
     }
 
     @ExceptionHandler(AccountStatusException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     Result handleAccountStatusException(AccountStatusException ex) {
-        return new Result(false, StatusCode.UNAUTHORIZED, "User account is abnormal.", ex.getMessage());
+        return new Result(false, HttpStatus.UNAUTHORIZED, "User account is abnormal.", ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     Result handleAccessDeniedException(AccessDeniedException ex) {
-        return new Result(false, StatusCode.FORBIDDEN, "No permission.", ex.getMessage());
+        return new Result(false, HttpStatus.FORBIDDEN, "No permission.", ex.getMessage());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     Result handleNoHandlerFoundException(NoHandlerFoundException ex) {
-        return new Result(false, StatusCode.NOT_FOUND, "This API endpoint is not found.", ex.getMessage());
-    }
-
-    @ExceptionHandler({HttpClientErrorException.class, HttpServerErrorException.class})
-    ResponseEntity<Result> handleRestClientException(HttpStatusCodeException ex) throws JsonProcessingException {
-
-        String exceptionMessage = ex.getMessage();
-
-        // Replace <EOL> with actual newlines.
-        exceptionMessage = exceptionMessage.replace("<EOL>", "\n");
-
-        // Extract the JSON part from the string.
-        String jsonPart = exceptionMessage.substring(exceptionMessage.indexOf("{"), exceptionMessage.lastIndexOf("}") + 1);
-
-        // Create an ObjectMapper instance.
-        ObjectMapper mapper = new ObjectMapper();
-
-        // Parse the JSON string to a JsonNode.
-        JsonNode rootNode = mapper.readTree(jsonPart);
-
-        // Extract the message.
-        String formattedExceptionMessage = rootNode.path("error").path("message").asText();
-
-        return new ResponseEntity<>(
-                new Result(false,
-                        ex.getStatusCode().value(),
-                        "A rest client error occurs, see data for details.",
-                        formattedExceptionMessage),
-                ex.getStatusCode());
+        return new Result(false, HttpStatus.NOT_FOUND, "This API endpoint is not found.", ex.getMessage());
     }
 
     /**
@@ -122,7 +100,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     Result handleOtherException(Exception ex) {
-        return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
+        return new Result(false, HttpStatus.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
     }
 
 }

@@ -18,3 +18,55 @@ jobs:
           cache: maven
       - name: compile user-management-api
         run: mvn -B compile --file pom.xml
+
+  test:
+    needs: compile
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: codeur47
+          POSTGRES_DB: user-management-api
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: compile user-management-api
+        run: mvn -B test --file pom.xml
+      - name: Generate Jacoco report
+        run: mvn org.jacoco:jacoco-maven-plugin:report
+      - name: Check code coverage
+        run: |
+          if [ $(grep -oP 'Total.*?(\d+)%' target/site/jacoco/index.html | grep -oP '\d+' | head -1) -lt 75 ]; then
+            echo "Code coverage is less than 75%"
+            exit 1
+          fi
+
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: package user-management-api
+        run: mvn -B package -DskipTests --file pom.xml

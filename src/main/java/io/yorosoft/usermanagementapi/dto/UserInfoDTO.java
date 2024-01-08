@@ -3,9 +3,11 @@ package io.yorosoft.usermanagementapi.dto;
 import io.yorosoft.usermanagementapi.enums.Role;
 import io.yorosoft.usermanagementapi.model.Token;
 import io.yorosoft.usermanagementapi.model.User;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record UserInfoDTO(
     Long id,
     String firstname,
