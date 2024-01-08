@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @ExtendWith(SpringExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest {
 
     @Container
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15");
@@ -59,7 +59,7 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    public void should_add_user_success_when_signup() throws Exception {
+    void should_add_user_success_when_signup() throws Exception {
 
         RegisterDTO registerDTO = new RegisterDTO("Ange Carmel", "YORO","yoro@gmail.com", "codeur47", Role.USER);
         String jsonRequest = objectMapper.writeValueAsString(registerDTO);

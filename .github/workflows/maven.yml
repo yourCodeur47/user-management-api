@@ -47,18 +47,10 @@ jobs:
           cache: maven
       - name: compile user-management-api
         run: mvn -B test --file pom.xml
-      - name: Generate Jacoco report
-        run: mvn org.jacoco:jacoco-maven-plugin:report
-      - name: Check code coverage
-        run: |
-          COVERAGE=$(grep -oP 'Total.*?(\d+)%' target/site/jacoco/index.html | grep -oP '\d+' | head -1);
-          echo "Code coverage: $COVERAGE%";
-          if [ $COVERAGE -lt 75 ]; then
-            echo "Code coverage is less than 75%, build failed."
-            exit 1
-          else
-            echo "Code coverage is 75% or more, build passed.";
-          fi
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   package:
     needs: test
