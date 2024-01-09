@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class TokenServiceTest extends TestConfigurer {
+class TokenServiceTest extends TestConfigurer {
 
     @Mock
     private TokenRepository tokenRepository;

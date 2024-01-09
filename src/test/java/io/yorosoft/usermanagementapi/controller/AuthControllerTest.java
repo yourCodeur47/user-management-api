@@ -9,6 +9,8 @@ import io.yorosoft.usermanagementapi.service.AuthService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,8 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -65,5 +66,41 @@ class AuthControllerTest extends TestConfigurer {
                 .andExpect(jsonPath("$.data.email").value(savedUser.getEmail()))
                 .andExpect(jsonPath("$.data.role").value(savedUser.getRole().toString()));
 
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRegisterDtoForTesting")
+    void should_throws_exception_when_signup_with_invalid_data(RegisterDTO registerDTO, String expectedMessage, String jsonPathData) throws Exception {
+
+        var registerDTOJson = this.objectMapper.writeValueAsString(registerDTO);
+
+        when(this.authService.signup(any(RegisterDTO.class))).thenThrow(new IllegalArgumentException("Provided arguments are invalid, see data for details."));
+
+        this.mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(registerDTOJson)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details."))
+                .andExpect(jsonPath("$.data['" + jsonPathData + "']").value(expectedMessage));
+
+    }
+
+    @Test
+    void should_throws_IllegalArgumentException_when_signup_with_existing_email() throws Exception {
+
+        RegisterDTO registerDTOWidthSameEmail = getRegisterDTO("John", "DOE","yoro@gmail.com", "john47", Role.ADMIN);
+
+        when(this.authService.signup(any(RegisterDTO.class))).thenThrow(new IllegalArgumentException("Email " + registerDTOWidthSameEmail.email() + " est déjà utilisé."));
+
+        this.mockMvc.perform(post("/api/auth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(registerDTOWidthSameEmail))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Email " + registerDTOWidthSameEmail.email() + " est déjà utilisé."));
+
+        verify(this.authService, times(1)).signup(any(RegisterDTO.class));
     }
 }

@@ -49,7 +49,7 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResultDTO handleIllegalArgumentException(IllegalArgumentException ex) {
-        return new ResultDTO(false, HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex);
+        return new ResultDTO(false, HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getMessage());
     }
 
     @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})

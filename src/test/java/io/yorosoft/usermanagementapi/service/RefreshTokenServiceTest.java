@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class RefreshTokenServiceTest extends TestConfigurer {
+class RefreshTokenServiceTest extends TestConfigurer {
 
     @Mock
     private RefreshTokenRepository refreshTokenRepository;
@@ -31,7 +31,7 @@ public class RefreshTokenServiceTest extends TestConfigurer {
     private RefreshTokenService refreshTokenService;
 
     @Test
-    void sould_generate_refresh_token_when_generateRefreshToken(){
+    void should_generate_refresh_token_when_generateRefreshToken(){
 
         String token = UUID.randomUUID().toString();
         Instant creationDate = Instant.now();
@@ -50,7 +50,7 @@ public class RefreshTokenServiceTest extends TestConfigurer {
     }
 
     @Test
-    void sould_validate_refresh_token_when_validateRefreshToken(){
+    void should_validate_refresh_token_when_validateRefreshToken(){
         String token = UUID.randomUUID().toString();
         Instant creationDate = Instant.now();
         RefreshToken savedRefreshToken = RefreshToken.builder().id(1L).token(token).creationDate(creationDate).build();
@@ -66,7 +66,7 @@ public class RefreshTokenServiceTest extends TestConfigurer {
     }
 
     @Test
-    void sould_exception_when_validateRefreshToken(){
+    void should_exception_when_validateRefreshToken(){
         String token = UUID.randomUUID().toString();
         Instant creationDate = Instant.now();
         RefreshToken savedRefreshToken = RefreshToken.builder().id(1L).token(token).creationDate(creationDate).build();
@@ -83,7 +83,7 @@ public class RefreshTokenServiceTest extends TestConfigurer {
     }
 
     @Test
-    void sould_delete_refreshtoken_when_delete_deleteRefreshToken(){
+    void should_delete_refreshToken_when_delete_deleteRefreshToken(){
         String token = UUID.randomUUID().toString();
 
         refreshTokenService.deleteRefreshToken(token);
