@@ -23,7 +23,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
 
 @Testcontainers
 @ExtendWith(SpringExtension.class)
@@ -66,11 +65,10 @@ class AuthControllerIntegrationTest extends TestConfigurer {
     void should_add_user_success_when_signup() throws Exception {
 
         RegisterDTO registerDTO = new RegisterDTO("Ange Carmel", "YORO","yoro@gmail.com", "codeur47", Role.USER);
-        String jsonRequest = objectMapper.writeValueAsString(registerDTO);
 
         given()
             .contentType(ContentType.JSON)
-            .body(jsonRequest)
+            .body(objectMapper.writeValueAsString(registerDTO))
             .when()
             .post("/api/auth")
             .then()
@@ -109,7 +107,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
     @Test
     void should_throws_exception_when_signup_with_same_email() throws JsonProcessingException {
 
-        RegisterDTO registerDTO = new RegisterDTO("Ange Carmel", "YORO","yoro@gmail.com", "codeur47", Role.USER);
+        RegisterDTO registerDTO = new RegisterDTO("Ange Carmel", "YORO","yoro1@gmail.com", "codeur47", Role.USER);
         String jsonRequest = objectMapper.writeValueAsString(registerDTO);
 
         given()
@@ -128,7 +126,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
                 then()
                 .body("flag", is(false))
                 .body("code", is(400))
-                .body("data", is("Email yoro@gmail.com est déjà utilisé."));
+                .body("data", is("Email yoro1@gmail.com est déjà utilisé."));
     }
 
 }
