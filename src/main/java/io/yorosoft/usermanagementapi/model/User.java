@@ -42,9 +42,6 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  @NotNull
-  private boolean enable;
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return role.getAuthorities();
@@ -77,7 +74,7 @@ public class User implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return isEnable();
+    return true;
   }
 
   @Override

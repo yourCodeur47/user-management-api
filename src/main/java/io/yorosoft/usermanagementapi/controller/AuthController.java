@@ -1,5 +1,6 @@
 package io.yorosoft.usermanagementapi.controller;
 
+import io.yorosoft.usermanagementapi.dto.LoginRequest;
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
 import io.yorosoft.usermanagementapi.dto.UserInfoDTO;
 import io.yorosoft.usermanagementapi.service.AuthService;
@@ -19,9 +20,15 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping()
+    @PostMapping("/signup")
     public ResultDTO signup(@RequestBody @Valid RegisterDTO registerDTO) {
         var user =  authService.signup(registerDTO);
         return new ResultDTO(true, HttpStatus.OK.value(), "User created width success", new UserInfoDTO(user));
+    }
+
+    @PostMapping("/login")
+    public ResultDTO login(@RequestBody @Valid LoginRequest loginRequest) {
+        var loginResponse =  authService.login(loginRequest);
+        return new ResultDTO(true, HttpStatus.OK.value(), "User login width success", loginResponse);
     }
 }
