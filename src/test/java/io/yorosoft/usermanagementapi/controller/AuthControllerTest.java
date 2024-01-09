@@ -56,7 +56,7 @@ class AuthControllerTest extends TestConfigurer {
 
         when(this.authService.signup(any(RegisterDTO.class))).thenReturn(savedUser);
 
-        this.mockMvc.perform(post(baseUrl).contentType(MediaType.APPLICATION_JSON).content(registerDTOJson).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post(baseUrl.concat("/signup")).contentType(MediaType.APPLICATION_JSON).content(registerDTOJson).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -76,7 +76,7 @@ class AuthControllerTest extends TestConfigurer {
 
         when(this.authService.signup(any(RegisterDTO.class))).thenThrow(new IllegalArgumentException("Provided arguments are invalid, see data for details."));
 
-        this.mockMvc.perform(post(baseUrl)
+        this.mockMvc.perform(post(baseUrl.concat("/signup"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(registerDTOJson)
                         .accept(MediaType.APPLICATION_JSON))
@@ -95,7 +95,7 @@ class AuthControllerTest extends TestConfigurer {
 
         when(this.authService.signup(any(RegisterDTO.class))).thenThrow(new IllegalArgumentException("Email " + registerDTOWidthSameEmail.email() + " est déjà utilisé."));
 
-        this.mockMvc.perform(post("/api/auth")
+        this.mockMvc.perform(post(baseUrl.concat("/signup"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(registerDTOWidthSameEmail))
                         .accept(MediaType.APPLICATION_JSON))

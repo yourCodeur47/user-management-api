@@ -70,7 +70,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
             .contentType(ContentType.JSON)
             .body(objectMapper.writeValueAsString(registerDTO))
             .when()
-            .post("/api/auth")
+            .post("/api/auth/signup")
             .then()
             .statusCode(200)
             .body("flag", equalTo(true))
@@ -81,7 +81,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
             .body("data.lastname", equalTo(registerDTO.lastname()))
             .body("data.email", equalTo(registerDTO.email()))
             .body("data.role", equalTo(registerDTO.role().name()))
-            .body("data.enabled", equalTo(false));
+            .body("data.enabled", equalTo(true));
     }
 
     @ParameterizedTest
@@ -95,7 +95,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
                 .contentType(ContentType.JSON)
                 .body(jsonRequest).
                 when()
-                .post("/api/auth").
+                .post("/api/auth/signup").
                 then()
                 .statusCode(400)
                 .body("flag", is(false))
@@ -115,14 +115,14 @@ class AuthControllerIntegrationTest extends TestConfigurer {
                 .contentType(ContentType.JSON)
                 .body(jsonRequest).
                 when()
-                .post("/api/auth");
+                .post("/api/auth/signup");
 
         given()
                 .port(port)
                 .contentType(ContentType.JSON)
                 .body(jsonRequest).
                 when()
-                .post("/api/auth").
+                .post("/api/auth/signup").
                 then()
                 .body("flag", is(false))
                 .body("code", is(400))
