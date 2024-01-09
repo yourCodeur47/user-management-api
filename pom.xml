@@ -16,6 +16,8 @@
 	<description>Spring Boot API to manage User</description>
 	<properties>
 		<java.version>17</java.version>
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.login>squ_846dd913f59a10d65126536749bfcef2d44b79ad</sonar.login>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -147,7 +149,6 @@
 			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>

@@ -51,9 +51,6 @@ jobs:
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: SonarQube Scan
-        run: mvn clean verify sonar:sonar -Dsonar.projectKey=yourCodeur47_user-management-api -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
 
   package:
     needs: test
