@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AuthControllerIntegrationTest extends TestConfigurer {
 
+    public static final String API_AUTH_URL = "/api/auth/";
     @Container
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15");
 
@@ -75,7 +76,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
             .contentType(ContentType.JSON)
             .body(objectMapper.writeValueAsString(registerDTO))
             .when()
-            .post("/api/auth/signup")
+            .post(API_AUTH_URL.concat("signup"))
             .then()
             .statusCode(200)
             .body("flag", equalTo(true))
@@ -98,7 +99,7 @@ class AuthControllerIntegrationTest extends TestConfigurer {
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(registerDTO)).
                 when()
-                .post("/api/auth/signup").
+                .post(API_AUTH_URL.concat("signup")).
                 then()
                 .statusCode(400)
                 .body("flag", is(false))
@@ -118,14 +119,14 @@ class AuthControllerIntegrationTest extends TestConfigurer {
                 .contentType(ContentType.JSON)
                 .body(jsonRequest).
                 when()
-                .post("/api/auth/signup");
+                .post(API_AUTH_URL.concat("signup"));
 
         given()
                 .port(port)
                 .contentType(ContentType.JSON)
                 .body(jsonRequest).
                 when()
-                .post("/api/auth/signup").
+                .post(API_AUTH_URL.concat("signup")).
                 then()
                 .body("flag", is(false))
                 .body("code", is(400))
@@ -137,20 +138,38 @@ class AuthControllerIntegrationTest extends TestConfigurer {
 
         RegisterDTO registerDTO = getRegisterDTO("Martial", "GARCIA","garcian@gmail.com", "codeur47", Role.USER);
 
-        var loginResponse = this.authService.signup(registerDTO);
+        this.authService.signup(registerDTO);
 
         given()
                 .port(port)
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(getLoginRequestDTO(registerDTO.email(), registerDTO.password()))).
                 when()
-                .post("/api/auth/login").
+                .post(API_AUTH_URL.concat("login")).
                 then()
                 .body("flag", is(true))
                 .body("code", is(200))
                 .body("message", is("User login width success"))
                 .body("data", notNullValue())
                 .body("data.username", equalTo("garcian@gmail.com"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideLoginRequestDTOForTesting")
+    void should_throws_exception_when_login_with_invalid_data(LoginRequestDTO loginRequestDTO, String expectedMessage, String jsonPathData) throws JsonProcessingException {
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(loginRequestDTO)).
+                when()
+                .post(API_AUTH_URL.concat("login")).
+                then()
+                .statusCode(400)
+                .body("flag", is(false))
+                .body("code", is(400))
+                .body("message", is("Provided arguments are invalid, see data for details."))
+                .body("data.'"+ jsonPathData + "'", is(expectedMessage));
     }
 
 }
