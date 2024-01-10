@@ -1,6 +1,6 @@
 package io.yorosoft.usermanagementapi.service;
 
-import io.yorosoft.usermanagementapi.dto.LoginRequest;
+import io.yorosoft.usermanagementapi.dto.LoginRequestDTO;
 import io.yorosoft.usermanagementapi.dto.LoginResponse;
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
 import io.yorosoft.usermanagementapi.model.User;
@@ -11,9 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,24 +34,16 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    @Transactional(readOnly = true)
-    public User getCurrentUser() {
-        Jwt principal = (Jwt) SecurityContextHolder.
-                getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmail(principal.getSubject())
-                .orElseThrow(() -> new UsernameNotFoundException("User email not found - " + principal.getSubject()));
-    }
-
-    public LoginResponse login(LoginRequest loginRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(),
-                loginRequest.password()));
+    public LoginResponse login(LoginRequestDTO loginRequestDTO) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(),
+                loginRequestDTO.password()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
         return LoginResponse.builder()
                 .token(token)
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
-                .username(loginRequest.email())
+                .username(loginRequestDTO.email())
                 .build();
     }
 }

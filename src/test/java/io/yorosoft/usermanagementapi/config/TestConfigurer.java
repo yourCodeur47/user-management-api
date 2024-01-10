@@ -1,5 +1,6 @@
 package io.yorosoft.usermanagementapi.config;
 
+import io.yorosoft.usermanagementapi.dto.LoginRequestDTO;
 import io.yorosoft.usermanagementapi.dto.RegisterDTO;
 import io.yorosoft.usermanagementapi.enums.Role;
 import io.yorosoft.usermanagementapi.model.RefreshToken;
@@ -15,6 +16,10 @@ public class TestConfigurer {
 
     protected static RegisterDTO getRegisterDTO(String firstname, String lastname, String email, String password, Role role) {
         return new RegisterDTO(firstname, lastname, email, password, role);
+    }
+
+    protected static LoginRequestDTO getLoginRequestDTO(String email, String password) {
+        return new LoginRequestDTO(email, password);
     }
 
     protected User getUser(String firstname, String lastname, String email, String password, Role role) {
@@ -50,6 +55,15 @@ public class TestConfigurer {
                         "Password must not be blank", "password"),
                 Arguments.of(getRegisterDTO("Ange Carmel", "YORO","yoro@gmail.com", "codeur47", null),
                         "Role must not be null", "role")
+        );
+    }
+
+    protected static Stream<Arguments> provideLoginRequestDTOForTesting() {
+        return Stream.of(
+                Arguments.of(getLoginRequestDTO("", "codeur47"),
+                        "Email must not be blank", "email"),
+                Arguments.of(getLoginRequestDTO("test1@gmail.com", ""),
+                        "Password must not be blank", "password")
         );
     }
 
